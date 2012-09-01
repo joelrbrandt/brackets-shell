@@ -2,6 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#include "config.h"
 #include "cefclient.h"
 #include <stdio.h>
 #include <cstdlib>
@@ -133,7 +134,7 @@ void AppGetSettings(CefSettings& settings, CefRefPtr<ClientApp> app) {
   }
     
   // Enable dev tools
-  settings.remote_debugging_port = 9234;
+  settings.remote_debugging_port = CEF_REMOTE_DEBUGGING_PORT;
 }
 
 // Returns the application browser settings based on command line arguments.

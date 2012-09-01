@@ -38,7 +38,8 @@
 #define APP_NAME @"Brackets"
 #endif
 
-
 // Un-comment this line to show the toolbar UI at the top of the appshell window
 // #define SHOW_TOOLBAR_UI
 
+#define CEF_REMOTE_DEBUGGING_PORT 9234
+#define CEF_NODE_HTTP_PORT_STRING "9235" // passed as a string, requires quotes

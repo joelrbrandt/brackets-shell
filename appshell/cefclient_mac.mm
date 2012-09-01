@@ -482,6 +482,9 @@ int main(int argc, char* argv[]) {
   [delegate performSelectorOnMainThread:@selector(createApp:) withObject:nil
                           waitUntilDone:NO];
 
+  // Start Node
+  app->StartNode();
+    
   // Run the application message loop.
   CefRunMessageLoop();
   

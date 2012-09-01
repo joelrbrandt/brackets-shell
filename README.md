@@ -31,3 +31,16 @@ The preferences are stored in `{USER}/Library/Application Support/Brackets/cef_d
 ## Building
 
 Information on building the app shell can be found on the [brackets-shell wiki](https://github.com/adobe/brackets-shell/wiki/Building-brackets-shell).
+
+### Additional notes on building with Node
+
+NOTE: This should be moved in to the wiki after this is in master.
+
+#### Mac
+
+##### Setup and Building
+
+1. [Download](https://github.com/joelrbrandt/node/downloads) binary distribution of libnode for 32-bit mac. v0.8.8 is the current supported version.
+2. Extract to `/deps/node`. (So, there should be a `/deps/node/library` directory, etc.) NOTE: There are symlinks in the tarball, so make sure you handle them properly. (For example, don't use `cp -pr`. Instead, use `mv` or `rsync -av`.)
+3. Build as before
+4. The port that the node server listens on (both http and ws) is configurable in `appshell/config.h`

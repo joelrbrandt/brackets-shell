@@ -39,7 +39,7 @@
         'USING_CEF_SHARED',
       ],
       'include_dirs': [
-        '.',
+        '.', './deps/node/include/node',
       ],
       'sources': [
         '<@(includes_common)',
@@ -110,6 +110,13 @@
               ],
             },
             {
+              # Add node library dependencies to the bundle.
+              'destination': '<(PRODUCT_DIR)/<(appname).app/Contents/Frameworks/',
+              'files': [
+                './deps/node/library/libnode.dylib',
+              ],
+            },
+            {
               # Add other resources to the bundle.
               'destination': '<(PRODUCT_DIR)/<(appname).app/Contents/Frameworks/Chromium Embedded Framework.framework/',
               'files': [
@@ -126,13 +133,38 @@
           ],
           'postbuilds': [
             {
-              'postbuild_name': 'Fix Framework Link',
+              'postbuild_name': 'Fix CEF Framework Link',
               'action': [
                 'install_name_tool',
                 '-change',
                 '@executable_path/libcef.dylib',
                 '@executable_path/../Frameworks/Chromium Embedded Framework.framework/Libraries/libcef.dylib',
                 '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}'
+              ],
+            },
+            {
+              'postbuild_name': 'Fix libnode Framework Link',
+              'action': [
+                'install_name_tool',
+                '-change',
+                '@executable_path/libnode.dylib',
+                '@executable_path/../Frameworks/libnode.dylib',
+                '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}'
+              ],
+            },
+            {
+              'postbuild_name': 'Bootstrap Node Modules',
+              'action': [
+                './scripts/bootstrap_node_modules.sh',
+              ],
+            },
+            {
+              'postbuild_name': 'Copy node server source',
+              'action': [
+                'cp',
+                '-pr',
+                './appshell/node',
+                '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/../Resources/node',
               ],
             },
             {
@@ -156,6 +188,7 @@
             'libraries': [
               '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
               '$(CONFIGURATION)/libcef.dylib',
+              './deps/node/library/libnode.dylib',
             ],
           },
           'sources': [
@@ -226,12 +259,13 @@
             'USING_CEF_SHARED',
           ],
           'include_dirs': [
-            '.',
+            '.', './deps/node/include/node',
           ],
           'link_settings': {
             'libraries': [
               '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
               '$(CONFIGURATION)/libcef.dylib',
+              './deps/node/library/libnode.dylib',
             ],
           },
           'sources': [
@@ -264,12 +298,26 @@
               # (DYLIB_INSTALL_NAME_BASE) relative to the main executable
               # (chrome).  A different relative path needs to be used in
               # appshell_helper_app.
-              'postbuild_name': 'Fix Framework Link',
+              'postbuild_name': 'Fix CEF Framework Link',
               'action': [
                 'install_name_tool',
                 '-change',
                 '@executable_path/libcef.dylib',
                 '@executable_path/../../../../Frameworks/Chromium Embedded Framework.framework/Libraries/libcef.dylib',
+                '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}'
+              ],
+            },
+            {
+              # The framework defines its load-time path
+              # (DYLIB_INSTALL_NAME_BASE) relative to the main executable
+              # (chrome).  A different relative path needs to be used in
+              # appshell_helper_app.
+              'postbuild_name': 'Fix libnode Framework Link',
+              'action': [
+                'install_name_tool',
+                '-change',
+                '@executable_path/libnode.dylib',
+                '@executable_path/../../../../Frameworks/libnode.dylib',
                 '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}'
               ],
             },

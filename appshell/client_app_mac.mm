@@ -21,13 +21,41 @@
  * 
  */ 
 
+#include "config.h"
 #include "client_app.h"
 #include "include/cef_base.h"
 #include <Cocoa/Cocoa.h>
 
 #include <string>
 
+#include "node.h"
+
+// Class to wrap node thread
+@interface NodeWrapper : NSObject
++(void)startNode:(id)param;
+@end
+
+@implementation NodeWrapper
++(void)startNode:(id)param{
+    NSString *appPath = [[NSBundle mainBundle] bundlePath];
+    NSString *webUrl = [appPath stringByAppendingString:@"/Contents/Resources/node/server.js"];
+    
+    int argc = 3;
+    char* argv[] = {(char *) "node", (char *) [webUrl UTF8String], (char *) CEF_NODE_HTTP_PORT_STRING };
+    
+    node::Start(argc, argv);
+}
+@end
+
+
 extern CFTimeInterval g_appStartupTime;
+
+int ClientApp::StartNode()
+{
+    NSLog(@"Starting node server");
+    [NSThread detachNewThreadSelector:@selector(startNode:) toTarget:[NodeWrapper class] withObject:nil];
+    return 0;
+}
 
 double ClientApp::GetElapsedMilliseconds()
 {
